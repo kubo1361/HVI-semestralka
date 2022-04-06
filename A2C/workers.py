@@ -20,12 +20,9 @@ class Worker:
         self.reward_function = reward_function
 
     def reset(self):
-        if self.print_score and self.episode % 10 == 0:
-            print('worker: ', self.id, '\tepisode: ',
-                  self.episode, '\tsteps: ', self.steps, '\tscore: ', self.score)
         self.agent.average_score.append(self.score)
         self.agent.average_steps.append(self.steps)
-        self.agent.episodes += 1
+        self.agent.episode += 1
         self.observation = self.env.reset()
         self.episode += 1
         self.score = 0
