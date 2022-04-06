@@ -1,3 +1,5 @@
+from gym.spaces import Discrete 
+
 def reward_func(r):
     if r > 1:
         return 1
@@ -36,3 +38,6 @@ class Worker:
         reward = self.reward_function(reward)
 
         return self.observation, reward, terminate
+
+    def isDiscrete(self):
+        return type(self.env.action_space) == type(Discrete(0))

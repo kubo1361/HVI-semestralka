@@ -51,13 +51,22 @@ class AgentA2C(Agent):
 
                 # extract actions
                 step_probs = F.softmax(step_actor, dim=-1)
-                step_actions = step_probs.multinomial(num_samples=1).detach()
+                if workers[0].isDiscrete():
+                    step_actions = step_probs.multinomial(num_samples=1).detach()
+                else:
+                    step_actions = step_actor.detach()
+
 
                 # step entropy calculation
                 step_log_probs = F.log_softmax(step_actor, dim=-1)
                 step_entropies = (
                     step_log_probs * step_probs).sum(1, keepdim=True)
-                step_log_probs_policy = step_log_probs.gather(1, step_actions)
+
+                if workers[0].isDiscrete():
+                    step_log_probs_policy = step_log_probs.gather(1, step_actions)
+                else:
+                    step_log_probs_policy = step_log_probs
+                
                 # update iteration steps
                 iter_critic_values[step] = step_critic
                 iter_entropies[step] = step_entropies

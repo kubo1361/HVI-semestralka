@@ -29,7 +29,7 @@ class Agent:
         # create folders for models and logs
         self.writer = SummaryWriter('runs/' + self.name + '/' + str(self.id))
         self.model_path = 'models/' + self.name + '/' 
-        self.progress_path = 'progress/' + self.name + '/'
+        self.progress_path = 'progress/' + self.name + '/' + str(self.id) + '.json'
 
         # progress tracking
         self.episode = 0
