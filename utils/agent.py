@@ -2,7 +2,7 @@ import torch
 import torch.optim as optim
 import os
 import json
-
+import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 
 
@@ -15,8 +15,11 @@ class Agent:
 
         # device - define and cast
         self.device = torch.device(
-            "cuda:0" if torch.cuda.is_available() else "cpu")
-        print('Device: ', self.device)
+            "cuda" if torch.cuda.is_available() else "cpu")
+        self.tensor = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.Tensor
+        print('Device: ', self.device, "\nTensor: ", self.tensor)
+        
+        
         self.model.to(self.device)
 
         # define optimizer
@@ -41,11 +44,20 @@ class Agent:
         if not os.path.exists(self.progress_path):
             os.makedirs(self.progress_path)
 
+        self.init_model()
+
     def load_model(self):
         try:
             self.model.load_state_dict(torch.load(self.model_path + '/' + str(self.id) + '.pt'))
         except:
             print('Model not found')
+
+    def init_model(self):
+        for layer in self.model.children():
+            if isinstance(layer, nn.Linear):
+                torch.nn.init.xavier_uniform_(layer.weight)
+                layer.bias.data.fill_(0.01)
+
 
     def save_model(self):
         torch.save(self.model.state_dict(), self.model_path + '/' + str(self.id) + '.pt')
@@ -79,9 +91,7 @@ class Agent:
             self.writer.add_scalar(stat[0], stat[1], self.episode)
 
     def act(self, observation):
-        self.model.eval()
-        obs = torch.from_numpy(observation).float()
-        return self.model(obs.to(self.device))
+        pass
 
 
 

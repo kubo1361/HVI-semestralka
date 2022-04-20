@@ -16,7 +16,6 @@ class Worker:
         self.print_score = print_score
         self.episode = 1
         self.steps = 0
-        self.observation = None
         self.score = 0
         self.agent = agent
         self.reward_function = reward_function
@@ -25,19 +24,19 @@ class Worker:
         self.agent.average_score.append(self.score)
         self.agent.average_steps.append(self.steps)
         self.agent.episode += 1
-        self.observation = self.env.reset()
+        observation = self.env.reset()
         self.episode += 1
         self.score = 0
         self.steps = 0
-        return self.observation
+        return observation
 
     def step(self, action):
-        self.observation, reward, terminate, _ = self.env.step(action)
+        observation, reward, terminate, _ = self.env.step(action)
         self.score += reward
         self.steps += 1
         reward = self.reward_function(reward)
 
-        return self.observation, reward, terminate
+        return observation, reward, terminate
 
     def isDiscrete(self):
         return type(self.env.action_space) == type(Discrete(0))
