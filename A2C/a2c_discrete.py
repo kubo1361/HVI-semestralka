@@ -128,14 +128,14 @@ class DiscreteA2C(Agent):
     def train(self, envs, total_episodes, steps, write=True):
         # initial variables
         self.model.train()
-        self.average_score = []
+        self.average_score = [-1000]
         self.average_steps = []
         avg_score = 0
         avg_steps = 0
         iter = 0
         workers = self._init_workers(envs)
         len_workers = len(workers)
-        best_avg = 0
+        best_avg = -100
         tqdm_bar = tqdm(range(self.episode, total_episodes),
                         desc="Episodes", total=total_episodes)
 
